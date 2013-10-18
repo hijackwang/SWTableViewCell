@@ -113,19 +113,19 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
 
 #pragma mark Initializers
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier containingTableView:(UITableView *)containingTableView leftUtilityButtons:(NSArray *)leftUtilityButtons rightUtilityButtons:(NSArray *)rightUtilityButtons {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    if (self) {
-        self.rightUtilityButtons = rightUtilityButtons;
-        self.leftUtilityButtons = leftUtilityButtons;
-        self.height = containingTableView.rowHeight;
-        self.containingTableView = containingTableView;
-        self.highlighted = NO;
-        [self initializer];
-    }
-    
-    return self;
-}
+//- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier containingTableView:(UITableView *)containingTableView leftUtilityButtons:(NSArray *)leftUtilityButtons rightUtilityButtons:(NSArray *)rightUtilityButtons {
+//    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+//    if (self) {
+//        self.rightUtilityButtons = rightUtilityButtons;
+//        self.leftUtilityButtons = leftUtilityButtons;
+//        self.height = containingTableView.rowHeight;
+//        self.containingTableView = containingTableView;
+//        self.highlighted = NO;
+//        [self initializer];
+//    }
+//    
+//    return self;
+//}
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
     self = [super initWithCoder:aDecoder];
@@ -147,17 +147,21 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
     return self;
 }
 
-- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
-    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
-    
-    if (self) {
-        [self initializer];
-    }
-    
-    return self;
-}
+//- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+//    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+//    
+//    if (self) {
+//        [self initializer];
+//    }
+//    
+//    return self;
+//}
 
-- (void)initializer {
+- (void)initializer
+{
+	self.highlighted = NO;
+	self.containingTableView = (UITableView *)self.superview.superview;
+	
     // Set up scroll view that will host our cell content
     UIScrollView *cellScrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(self.bounds), _height)];
     cellScrollView.contentSize = CGSizeMake(CGRectGetWidth(self.bounds) + [self utilityButtonsPadding], _height);
@@ -173,11 +177,13 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
     // Set up the views that will hold the utility buttons
     SWUtilityButtonView *scrollViewButtonViewLeft = [[SWUtilityButtonView alloc] initWithUtilityButtons:_leftUtilityButtons parentCell:self utilityButtonSelector:@selector(leftUtilityButtonHandler:)];
     [scrollViewButtonViewLeft setFrame:CGRectMake([self leftUtilityButtonsWidth], 0, [self leftUtilityButtonsWidth], _height)];
+	scrollViewButtonViewLeft.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.scrollViewButtonViewLeft = scrollViewButtonViewLeft;
     [self.cellScrollView addSubview:scrollViewButtonViewLeft];
     
     SWUtilityButtonView *scrollViewButtonViewRight = [[SWUtilityButtonView alloc] initWithUtilityButtons:_rightUtilityButtons parentCell:self utilityButtonSelector:@selector(rightUtilityButtonHandler:)];
     [scrollViewButtonViewRight setFrame:CGRectMake(CGRectGetWidth(self.bounds), 0, [self rightUtilityButtonsWidth], _height)];
+	scrollViewButtonViewRight.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     self.scrollViewButtonViewRight = scrollViewButtonViewRight;
     [self.cellScrollView addSubview:scrollViewButtonViewRight];
     
@@ -269,6 +275,10 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
     }
 }
 
+- (void)setHeight:(CGFloat)height
+{
+	_height = height;
+}
 
 #pragma mark - Overriden methods
 
@@ -405,6 +415,7 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
     button.backgroundColor = color;
     [button setTitle:title forState:UIControlStateNormal];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+	button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     [self addObject:button];
 }
 
@@ -412,6 +423,7 @@ static NSString * const kTableViewCellContentView = @"UITableViewCellContentView
     UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.backgroundColor = color;
     [button setImage:icon forState:UIControlStateNormal];
+	button.autoresizingMask = UIViewAutoresizingFlexibleHeight;
     [self addObject:button];
 }
 
